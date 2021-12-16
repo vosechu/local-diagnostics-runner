@@ -6,7 +6,7 @@
 Example output:
 
 ```json
-{ "eventType":"LocalDiagnosticsAuthCheck", "dns_resolution": 0.230948, "tcp_established": 0.000354, "time_appconnect":  0.000221, "ssl_handshake_done": 0.8823, "time_to_filetransfer_begin": 0.0987, "httpResponseCode": 200, "local_ip": "10.1.241.220", "remote_ip": "8.8.8.8", "num_connects": 1, "num_redirects": 1 }
+{ "eventType":"DiagnosticsCurlCheck", "dns_resolution": 0.230948, "tcp_established": 0.000354, "time_appconnect":  0.000221, "ssl_handshake_done": 0.8823, "time_to_filetransfer_begin": 0.0987, "httpResponseCode": 200, "local_ip": "172.17.0.2", "remote_ip": "142.250.191.46", "num_connects": 1, "num_redirects": 1 }
 ```
 
 ## Hypothesis:

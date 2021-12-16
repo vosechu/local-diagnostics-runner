@@ -5,13 +5,10 @@ This repo represents a container and utility scripts for diagnostics-runnering a
 # How to run it:
 Use our handy incantations:
 
-**1. Build and tag as diagnostics-runner**
+**1. Build your docker image**
 ```
+cp .env.example .env
 docker build -f Dockerfile . --tag diagnostics-runner --target diagnostics-runner
-```
-**2. Run**
-```
-docker run -it --rm diagnostics-runner
 ```
 ## Locally reporting to New Relic NRDB
 
@@ -19,16 +16,12 @@ docker run -it --rm diagnostics-runner
 
 Go to [API Keys](https://one.newrelic.com/launcher/api-keys-ui.launcher?pane=eyJuZXJkbGV0SWQiOiJhcGkta2V5cy11aS5ob21lIn0=), then click on "New Relic insert keys".
 
+Put this file into your `.env` file.
+
 **3. Run (after the building step)**
 
 ```
-docker run -e EVENTS_INSERT_API_KEY=<THE FANCY INSERT KEY> -it --rm diagnostics-runner
-```
-
-**Protip**: if you want to add more variables to docker, add each one using
-
-```
--e <VARIABLE NAME>=<VALUE>
+docker run -it --rm --env-file=.env diagnostics-runner
 ```
 
 ## How to disable scripts

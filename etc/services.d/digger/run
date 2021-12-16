@@ -14,21 +14,19 @@ if [[ -z $DISABLE_DIGGER ]] ; then
         DIG_RESULT=`cat $temp_file`
 
         # matching:
-        # `ANSWER SECTION:
-        # authorization.nr-ops.net. 3442	IN	CNAME	cf-proxy-prd2a.nr-ops.net.
-        # cf-proxy-prd2a.nr-ops.net. 2505	IN	CNAME	cf-traefik-prd2a.nr-ops.net.
-        # cf-traefik-prd2a.nr-ops.net. 4	IN	A	10.31.8.76 ;;`
+        # `;; ANSWER SECTION:
+        # google.com.		192	IN	A	142.250.191.78`
         ANSWER_SECTION=`echo $DIG_RESULT | grep -o 'ANSWER SECTION: \w.* ;; '`
 
         # matching:
-        # `A	10.31.8.76`, extracting only `10.31.8.76`
+        # `A	142.250.191.78`, extracting only `142.250.191.78`
         RESPONSE_IP=`echo $ANSWER_SECTION \
             | grep -o 'A [[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*' \
             | sed 's/A//g' \
             | sed 's/\s//g'`
 
         # matching:
-        # `cf-traefik-prd2a.nr-ops.net. 4	IN	A	10.31.8.76`, extracting only `cf-traefik-prd2a.nr-ops.net.`
+        # `google.com.		192	IN	A	142.250.191.78`, extracting only `google.com.`
         ANSWER_ADDRESS=`echo $ANSWER_SECTION \
             | grep -o -E '([^\ ]+)\ [[:digit:]]* IN A' \
             | sed 's/ IN A//g' \
@@ -42,13 +40,13 @@ if [[ -z $DISABLE_DIGGER ]] ; then
             | sed 's/\s//g'`
 
         # matching:
-        # `SERVER: 172.18.3.13#53(172.18.3.13)`, extracting only `172.18.3.13`
+        # `SERVER: 172.16.3.13#53(172.16.3.13)`, extracting only `172.16.3.13`
         DNS_SERVER=`echo $DIG_RESULT \
             | grep -o 'SERVER: [[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*\.[[:digit:]]*' \
             | sed 's/SERVER://g' \
             | sed 's/\s//g'`
 
-        echo "{\"eventType\":\"DiagnosticsAuthorizationDig\", \"dns_server_ip\":\"$DNS_SERVER\", \"response_ip\":\"$RESPONSE_IP\", \"query_time_ms\":$QUERY_TIME, \"response_name\":\"$ANSWER_ADDRESS\", \"machine_id\":\"$MACHINE_ID\", \"primary_ip\": \"$PRIMARY_IP\" }" > $temp_file
+        echo "{\"eventType\":\"DiagnosticsDig\", \"dns_server_ip\":\"$DNS_SERVER\", \"response_ip\":\"$RESPONSE_IP\", \"query_time_ms\":$QUERY_TIME, \"response_name\":\"$ANSWER_ADDRESS\", \"machine_id\":\"$MACHINE_ID\", \"primary_ip\": \"$PRIMARY_IP\" }" > $temp_file
 
         gzip -c $temp_file | curl -X POST -H "Content-Type: application/json" -H "X-Insert-Key: $EVENTS_INSERT_API_KEY" -H "Content-Encoding: gzip" $COLLECTOR_URL/v1/accounts/$ACCOUNT_ID/events -s -o /dev/null --data-binary @-
 
