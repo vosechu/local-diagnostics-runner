@@ -1,0 +1,21 @@
+#!/usr/bin/with-contenv bash
+
+# If DEBUG is set, show all commands being executed AND fail fast if one of the commands
+# raises an exception
+if [[ -n $DEBUG_CURLER ]] ; then
+    set -ex
+fi
+
+temp_file=$(mktemp)
+if [[ -z $DISABLE_CURLER ]] ; then
+    while true ; do
+        curl $URL \
+        --retry 0 \
+        --max-time 3 \
+        -w "{ \"eventType\":\"LocalDiagnosticsAuthCheck\", \"dns_resolution\": %{time_namelookup}, \"tcp_established\": %{time_connect}, \"time_appconnect\": %{time_appconnect}, \"ssl_handshake_done\": %{time_appconnect}, \"time_to_filetransfer_begin\": %{time_starttransfer}, \"httpResponseCode\": %{response_code}, \"local_ip\": \"%{local_ip}\", \"remote_ip\": \"%{remote_ip}\", \"num_connects\": %{num_connects}, \"num_redirects\": %{num_redirects} }" -s -o /dev/null > $temp_file
+
+        gzip -c $temp_file | curl -X POST -H "Content-Type: application/json" -H "X-Insert-Key: $EVENTS_INSERT_API_KEY" -H "Content-Encoding: gzip" $COLLECTOR_URL/v1/accounts/$ACCOUNT_ID/events -s -o /dev/null --data-binary @-
+
+        sleep 10
+    done
+fi

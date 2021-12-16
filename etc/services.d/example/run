@@ -1,0 +1,21 @@
+#!/usr/bin/with-contenv bash
+
+# 1. What is your hypothesis?
+# 2. Can your test in this file support proving/defining that hypothesis?
+# 3. How will you record results?
+# 4. How will you analyze results?
+
+# # If DEBUG is set, show all commands being executed AND fail fast if one of the commands
+# # raises an exception
+# if [[ -n $DEBUG_EXAMPLE ]] ; then
+#     set -ex
+# fi
+
+# # Please also add this environment value to the grandcentral.yml
+# if [[ -z $DISABLE_EXAMPLE ]]; then
+#   while true; do
+#     # Do something
+#     # Send it to New Relic
+#     sleep 10
+#   done
+# fi

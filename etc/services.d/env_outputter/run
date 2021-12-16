@@ -1,0 +1,19 @@
+#!/usr/bin/with-contenv bash
+
+# If DEBUG is set, show all commands being executed AND fail fast if one of the commands
+# raises an exception
+if [[ -n $DEBUG_ENV_OUTPUTTER ]] ; then
+    set -ex
+fi
+
+function prepend() { while read line; do echo "${1}${line}"; done; }
+
+if [[ -z $DISABLE_ENV_OUTPUTTER ]]; then
+  env | sort | prepend "[EnvOutputter]: "
+
+  cat /etc/resolv.conf | prepend "[EnvOutputter|Libresolv]: "
+
+  while true; do
+    sleep 300000
+  done
+fi

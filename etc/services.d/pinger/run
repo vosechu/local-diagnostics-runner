@@ -1,0 +1,51 @@
+#!/usr/bin/with-contenv bash
+
+# If DEBUG is set, show all commands being executed AND fail fast if one of the commands
+# raises an exception
+if [[ -n $DEBUG_PINGER ]] ; then
+    set -ex
+fi
+
+# This yoinks the nameservers from /etc/resolv.conf and puts them in an array.
+#
+# Bash note: readarray turns lists into bash arrays, but it doesn't work well in
+# a pipe without some other weird options. So this creates a new subshell
+# `<(cmds)` and pipes its stdout to the stdin of readarray `< <(cmds)`.
+# https://tldp.org/LDP/abs/html/process-sub.html
+#
+# Input will look something like:
+#       nameserver 127.0.0.1
+#       # DNS requests are forwarded to the host. DHCP DNS options are ignored.
+#       nameserver 192.168.65.5
+readarray -t DNS_SERVERS < <(\
+    cat /etc/resolv.conf \
+    | grep nameserver \
+    | grep -v '127.0.0.1'\
+    | sed 's/nameserver //g'\
+)
+
+temp_file=$(mktemp)
+if [[ -z $DISABLE_PINGER ]] ; then
+    while true ; do
+        for i in "${DNS_SERVERS[@]}" ; do
+            ping -c1 -v $i > $temp_file
+            PING_RESULT=`cat $temp_file`
+
+            # matching:
+            # `time=76.176` extracting only `76.176`
+            TIME=`echo $PING_RESULT | grep -o 'time=[[:digit:]]*\.\?[[:digit:]]*' \
+            | sed 's/time=//g'`
+
+            # matching:
+            # `0.0%`, extracting only `0.0`
+            PACKET_LOSS=`echo $PING_RESULT | grep -o '[[:digit:]]*\.\?[[:digit:]]*%' \
+            | sed 's/%//g'`
+
+            echo "{\"eventType\":\"LocalDiagnosticsDnsPing\", \"dns_server_pinged\":\"$i\", \"time_ms\":$TIME, \"packet_loss_percent\":$PACKET_LOSS, \"machine_id\":\"$MACHINE_ID\", \"primary_ip\": \"$PRIMARY_IP\" }" > $temp_file
+            gzip -c $temp_file | curl -X POST -H "Content-Type: application/json" -H "X-Insert-Key: $EVENTS_INSERT_API_KEY" -H "Content-Encoding: gzip" $COLLECTOR_URL/v1/accounts/$ACCOUNT_ID/events -s -o /dev/null --data-binary @-
+
+        done
+
+        sleep 10
+    done
+fi
