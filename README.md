@@ -21,7 +21,7 @@ Put this file into your `.env` file.
 **3. Run (after the building step)**
 
 ```
-docker run -it --rm --env-file=.env diagnostics-runner
+docker run -it --rm --env-file=.env -e OUTER_HOSTNAME=$HOST diagnostics-runner
 ```
 
 ## How to disable scripts
@@ -41,3 +41,9 @@ docker run -e EVENTS_INSERT_API_KEY=<MALARKEY> -e DISABLE_PINGER=true -e DISABLE
 DOCKER_HOST="ssh://pi@raspberrypi.local" docker build -f Dockerfile . --tag diagnostics-runner --target diagnostics-runner
 DOCKER_HOST="ssh://pi@raspberrypi.local" docker run -it --rm diagnostics-runner
 ```
+
+### Credits
+
+Thanks to the authors of these fabulous posts:
+- How to get your wan ip via bash: https://unix.stackexchange.com/a/81699
+-

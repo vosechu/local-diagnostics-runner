@@ -6,6 +6,8 @@ if [[ -n $DEBUG_DIGGER ]] ; then
     set -ex
 fi
 
+export PRIMARY_IP=$(dig @resolver4.opendns.com myip.opendns.com +short -4)
+
 temp_file=$(mktemp)
 url=${URL/https:\/\//} # strip protocol from url
 if [[ -z $DISABLE_DIGGER ]] ; then
@@ -46,10 +48,10 @@ if [[ -z $DISABLE_DIGGER ]] ; then
             | sed 's/SERVER://g' \
             | sed 's/\s//g'`
 
-        echo "{\"eventType\":\"DiagnosticsDig\", \"dns_server_ip\":\"$DNS_SERVER\", \"response_ip\":\"$RESPONSE_IP\", \"query_time_ms\":$QUERY_TIME, \"response_name\":\"$ANSWER_ADDRESS\", \"machine_id\":\"$MACHINE_ID\", \"primary_ip\": \"$PRIMARY_IP\" }" > $temp_file
+        echo "{\"eventType\":\"DiagnosticsDig\", \"dns_server_ip\":\"$DNS_SERVER\", \"response_ip\":\"$RESPONSE_IP\", \"query_time_ms\":$QUERY_TIME, \"response_name\":\"$ANSWER_ADDRESS\", \"hostname\":\"$OUTER_HOSTNAME\", \"primary_ip\": \"$PRIMARY_IP\" }" > $temp_file
 
         gzip -c $temp_file | curl -X POST -H "Content-Type: application/json" -H "X-Insert-Key: $EVENTS_INSERT_API_KEY" -H "Content-Encoding: gzip" $COLLECTOR_URL/v1/accounts/$ACCOUNT_ID/events -s -o /dev/null --data-binary @-
 
-        sleep 10
+        sleep 1
     done
 fi
