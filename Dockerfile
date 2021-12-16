@@ -49,4 +49,3 @@ RUN apt-get update && \
 FROM build AS diagnostics-runner
 
 ADD etc/services.d /etc/services.d
-ON

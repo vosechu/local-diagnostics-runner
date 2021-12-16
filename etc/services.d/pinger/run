@@ -43,7 +43,7 @@ if [[ -z $DISABLE_PINGER ]] ; then
             PACKET_LOSS=`echo $PING_RESULT | grep -o '[[:digit:]]*\.\?[[:digit:]]*%' \
             | sed 's/%//g'`
 
-            echo "{\"eventType\":\"DiagnosticsDnsPing\", \"dns_server_pinged\":\"$i\", \"time_ms\":$TIME, \"packet_loss_percent\":$PACKET_LOSS, \"hostname\":\"$OUTER_HOSTNAME\", \"primary_ip\": \"$PRIMARY_IP\"S }" > $temp_file
+            echo "{\"eventType\":\"DiagnosticsDnsPing\", \"dns_server_pinged\":\"$i\", \"time_ms\":$TIME, \"packet_loss_percent\":$PACKET_LOSS, \"hostname\":\"$OUTER_HOSTNAME\", \"primary_ip\": \"$PRIMARY_IP\" }" > $temp_file
             gzip -c $temp_file | curl -X POST -H "Content-Type: application/json" -H "X-Insert-Key: $EVENTS_INSERT_API_KEY" -H "Content-Encoding: gzip" $COLLECTOR_URL/v1/accounts/$ACCOUNT_ID/events -s -o /dev/null --data-binary @-
 
         done
