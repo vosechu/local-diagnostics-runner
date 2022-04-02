@@ -8,7 +8,7 @@ Use our handy incantations:
 **1. Build your docker image**
 ```
 cp .env.example .env
-docker build -f Dockerfile . --tag diagnostics-runner --target diagnostics-runner
+docker build -f Dockerfile . --tag diagnostics-runner
 ```
 ## Locally reporting to New Relic NRDB
 
@@ -21,7 +21,7 @@ Put this file into your `.env` file.
 **3. Run (after the building step)**
 
 ```
-docker run -it --rm --env-file=.env -e OUTER_HOSTNAME=$HOST diagnostics-runner
+docker run --rm --env-file=.env -e OUTER_HOSTNAME=`hostname` diagnostics-runner
 ```
 
 ## How to disable scripts
@@ -38,8 +38,8 @@ docker run -e EVENTS_INSERT_API_KEY=<MALARKEY> -e DISABLE_PINGER=true -e DISABLE
 # Running locally on a raspberry pi
 
 ```
-DOCKER_HOST="ssh://pi@raspberrypi.local" docker build -f Dockerfile . --tag diagnostics-runner --target diagnostics-runner
-DOCKER_HOST="ssh://pi@raspberrypi.local" docker run -it --rm diagnostics-runner
+DOCKER_HOST="ssh://pi@raspberrypi.local" docker build -f Dockerfile . --tag diagnostics-runner
+DOCKER_HOST="ssh://pi@raspberrypi.local" docker run --rm -it  diagnostics-runner
 ```
 
 ### Credits

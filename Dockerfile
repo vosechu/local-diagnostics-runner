@@ -17,9 +17,7 @@ RUN set -ex \
 # see: https://github.com/just-containers/s6-overlay#bin-and-sbin-are-symlinks
 ENV S6_OVERLAY_VERSION=v1.22.1.0
 RUN set -ex \
-    && curl -o /tmp/s6-overlay.tgz -sSL https://github.com/just-containers/s6-overlay/releases/download/${S6_OVERLAY_VERSION}/s6-overlay-amd64.tar.gz \
-    && S6_SHA256=73f9779203310ddf9c5132546a1978e1a2b05990263b92ed2c34c1e258e2df6c \
-    && echo "${S6_SHA256}  /tmp/s6-overlay.tgz" | sha256sum -c - \
+    && curl -o /tmp/s6-overlay.tgz -sSL https://github.com/just-containers/s6-overlay/releases/download/${S6_OVERLAY_VERSION}/s6-overlay-armhf.tar.gz \
     && tar xzf /tmp/s6-overlay.tgz -C / --exclude="./bin" \
     && tar xzf /tmp/s6-overlay.tgz -C /usr ./bin \
     && rm -fv /tmp/s6-overlay.tgz
