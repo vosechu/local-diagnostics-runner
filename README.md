@@ -42,6 +42,57 @@ DOCKER_HOST="ssh://pi@raspberrypi.local" docker build -f Dockerfile . --tag diag
 DOCKER_HOST="ssh://pi@raspberrypi.local" docker run --rm -it  diagnostics-runner
 ```
 
+## Pi clone setup
+
+Adding myself to the sudoers file
+```
+echo "$USER ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee "/etc/sudoers.d/dont-prompt-$USER-for-sudo-password"
+```
+
+Copying in my ssh key
+```
+ssh-copy-id -i ~/.ssh/id_ed25519 vosechu@lepotato-at-router
+ssh-copy-id -i ~/.ssh/id_ed25519 vosechu@lepotato-at-office
+```
+
+Installing docker
+```
+curl -fsSL https://get.docker.com -o get-docker.sh
+DRY_RUN=1 sudo sh ./get-docker.sh
+sudo sh ./get-docker.sh
+
+# Boot docker automatically
+sudo systemctl enable docker.service
+sudo systemctl enable containerd.service
+
+# Install rootless mode manually
+sudo groupadd docker
+sudo usermod -aG docker $USER
+newgrp docker
+docker run hello-world
+```
+
+Downloading and building the diagnostics image
+```
+git clone https://github.com/vosechu/local-diagnostics-runner.git
+cd local-diagnostics-runner
+
+# Add in your api key (instructions above)
+cp .env.example .env
+vi .env
+
+# Build the image
+docker build -f Dockerfile . --tag diagnostics-runner
+
+# Run the image manually to see how it goes
+docker run --rm --env-file=.env -e OUTER_HOSTNAME=`hostname` diagnostics-runner
+```
+
+Starting the diagnostics image automatically on boot
+```
+docker run -d --restart unless-stopped --env-file=.env -e OUTER_HOSTNAME=`hostname` diagnostics-runner
+```
+
 # New Relic dashboard
 
 This is a pre-formatted JSON that you can edit and import into New Relic if you choose to do so. You'll need to change the account id, and the filters will need to be edited to add the "Filter to the current dashboard" bit back in.
