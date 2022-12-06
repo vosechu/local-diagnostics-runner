@@ -1,6 +1,15 @@
 # Diagnostic diagnostics-runners Runner
 This repo represents a container and utility scripts for diagnostics-runnering and troubleshooting.
 
+I got this to diagnose my network internally. So I have one pi sitting right next to the router, one by my computer, and also I run this docker container on my laptop. Now that I have that, I can see some info when frames drop in Zoom or something.
+
+1) If all three lines on the graph go to zero, it's my modem
+2) If the two lines coming from my office, it's my wifi
+3) If just my laptop's line drops, it's my VPN or something on my laptop
+
+These are the most useful charts I use all day long:
+
+![Notification_Center](https://user-images.githubusercontent.com/11463/205952982-4264f588-5296-4ba6-b28b-13cc652d866a.png)
 
 # How to run it:
 Use our handy incantations:
@@ -41,6 +50,17 @@ docker run -e EVENTS_INSERT_API_KEY=<MALARKEY> -e DISABLE_PINGER=true -e DISABLE
 DOCKER_HOST="ssh://pi@raspberrypi.local" docker build -f Dockerfile . --tag diagnostics-runner
 DOCKER_HOST="ssh://pi@raspberrypi.local" docker run --rm -it  diagnostics-runner
 ```
+
+## Pi clones
+
+Because Raspberry pi's aren't really available, here's the things I got. *The case required some dremeling to get it to fit*
+
+* https://www.amazon.com/gp/product/B0BDQV2J7G/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1
+* https://www.amazon.com/gp/product/B078MCFM62/ref=ppx_yo_dt_b_asin_title_o00_s01?ie=UTF8&psc=1
+* https://www.amazon.com/gp/product/B0B79JHSFW/ref=ppx_yo_dt_b_asin_title_o00_s01?ie=UTF8&psc=1
+* https://www.amazon.com/gp/product/B06XWMQ81P/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1
+
+Once I got the parts, I flased the image using these instructions: http://wiki.loverpi.com/tutorial:sbc:libre-aml-s905x-getting-started
 
 ## Pi clone setup
 
