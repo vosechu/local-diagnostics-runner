@@ -131,6 +131,9 @@ This is a pre-formatted JSON that you can edit and import into New Relic if you 
             "width": 3,
             "height": 3
           },
+          "linkedEntityGuids": [
+            "MzM2NzUzOXxWSVp8REFTSEJPQVJEfDM5NjgyOTQ"
+          ],
           "visualization": {
             "id": "viz.table"
           },
@@ -171,6 +174,9 @@ This is a pre-formatted JSON that you can edit and import into New Relic if you 
             "width": 3,
             "height": 3
           },
+          "linkedEntityGuids": [
+            "MzM2NzUzOXxWSVp8REFTSEJPQVJEfDM5NjgyOTQ"
+          ],
           "visualization": {
             "id": "viz.table"
           },
@@ -204,11 +210,11 @@ This is a pre-formatted JSON that you can edit and import into New Relic if you 
           }
         },
         {
-          "title": "95% ping response times by  DNS server",
+          "title": "95th% ping response times by  DNS server (ms)",
           "layout": {
             "column": 5,
             "row": 4,
-            "width": 8,
+            "width": 4,
             "height": 3
           },
           "linkedEntityGuids": null,
@@ -216,7 +222,6 @@ This is a pre-formatted JSON that you can edit and import into New Relic if you 
             "id": "viz.line"
           },
           "rawConfiguration": {
-            "dataFormatters": [],
             "facet": {
               "showOtherSeries": false
             },
@@ -227,14 +232,52 @@ This is a pre-formatted JSON that you can edit and import into New Relic if you 
               {
                 "accountId": 3367539,
                 "query": "FROM DiagnosticsDnsPing SELECT percentile(time_ms, 95) facet dns_server_pinged TIMESERIES MAX"
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            },
+            "yAxisLeft": {
+              "max": 15,
+              "min": 0.01,
+              "zero": false
+            }
+          }
+        },
+        {
+          "title": "95th% ping response times by hostname (ms)",
+          "layout": {
+            "column": 9,
+            "row": 4,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "legend": {
+              "enabled": true
+            },
+            "nrqlQueries": [
+              {
+                "accountId": 3367539,
+                "query": "FROM DiagnosticsDnsPing SELECT percentile(time_ms, 95) facet hostname, dns_server_pinged TIMESERIES MAX"
               },
               {
                 "accountId": 3367539,
-                "query": "FROM DiagnosticsDnsPing select max(packet_loss_percent) as 'Any Packet Loss'  facet dns_server_pinged timeseries MAX"
+                "query": "FROM DiagnosticsDnsPing select max(packet_loss_percent) as 'Packet Loss %' timeseries MAX"
               }
             ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            },
             "yAxisLeft": {
-              "max": 2,
+              "max": 15,
               "min": 0.01,
               "zero": false
             }
@@ -269,15 +312,15 @@ This is a pre-formatted JSON that you can edit and import into New Relic if you 
             "id": "viz.markdown"
           },
           "rawConfiguration": {
-            "text": "Connecting to a service\n---\n* How quickly are we connecting to it\n* How fast are each of the connection events?\n* Is any part of connect taking particularly long at a particular location?"
+            "text": "Connecting to our service\n---\n* How quickly are we connecting to our service?\n* How fast are each of the connection events?\n* Is any part of connect taking particularly long at a particular location?"
           }
         },
         {
-          "title": "Max aggregate time for connection events",
+          "title": "Max aggregate time for connection events (ms)",
           "layout": {
             "column": 5,
             "row": 8,
-            "width": 8,
+            "width": 4,
             "height": 3
           },
           "linkedEntityGuids": null,
@@ -292,13 +335,142 @@ This is a pre-formatted JSON that you can edit and import into New Relic if you 
             "nrqlQueries": [
               {
                 "accountId": 3367539,
-                "query": "From DiagnosticsCurl select percentile(dns_resolution, 95) as 'DNS Resolution', percentile(tcp_established-dns_resolution, 95) as 'TCP Established', percentile(ssl_handshake_done-tcp_established, 95) as 'SSL Handshake', percentile(time_to_filetransfer_begin-ssl_handshake_done, 95) as 'Time to Transfer' timeseries MAX"
+                "query": "From DiagnosticsCurl select percentile(dns_resolution, 95) * 1000 as 'DNS Resolution', percentile(tcp_established-dns_resolution, 95) * 1000 as 'TCP Established', percentile(ssl_handshake_done-tcp_established, 95) * 1000 as 'SSL Handshake', percentile(time_to_filetransfer_begin-ssl_handshake_done, 95) * 1000 as 'Time to Transfer' timeseries MAX"
               }
             ],
             "yAxisLeft": {
-              "max": 0.25,
+              "max": 1000,
               "min": 0.01,
               "zero": false
+            }
+          }
+        },
+        {
+          "title": "Max aggregate time for connection events (ms)",
+          "layout": {
+            "column": 9,
+            "row": 8,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.area"
+          },
+          "rawConfiguration": {
+            "dataFormatters": [],
+            "legend": {
+              "enabled": true
+            },
+            "nrqlQueries": [
+              {
+                "accountId": 3367539,
+                "query": "From DiagnosticsCurl select percentile(dns_resolution, 95) * 1000 as 'DNS Resolution', percentile(tcp_established-dns_resolution, 95) * 1000 as 'TCP Established', percentile(ssl_handshake_done-tcp_established, 95) * 1000 as 'SSL Handshake', percentile(time_to_filetransfer_begin-ssl_handshake_done, 95) * 1000 as 'Time to Transfer' timeseries MAX"
+              }
+            ],
+            "yAxisLeft": {
+              "max": 1000,
+              "min": 0.01,
+              "zero": false
+            }
+          }
+        },
+        {
+          "title": "Time to DNS resolution by hostname (ms)",
+          "layout": {
+            "column": 1,
+            "row": 11,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "legend": {
+              "enabled": true
+            },
+            "nrqlQueries": [
+              {
+                "accountId": 3367539,
+                "query": "From DiagnosticsCurl select percentile(dns_resolution, 95) * 1000 as 'DNS Resolution' timeseries MAX FACET hostname"
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            },
+            "yAxisLeft": {
+              "zero": true
+            }
+          }
+        },
+        {
+          "title": "Time to SSL handshake by hostname (ms)",
+          "layout": {
+            "column": 5,
+            "row": 11,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "legend": {
+              "enabled": true
+            },
+            "nrqlQueries": [
+              {
+                "accountId": 3367539,
+                "query": "From DiagnosticsCurl select percentile(ssl_handshake_done, 95) * 1000 as 'SSL Handshake' timeseries MAX FACET hostname"
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            },
+            "yAxisLeft": {
+              "zero": true
+            }
+          }
+        },
+        {
+          "title": "Time to first byte by hostname (ms)",
+          "layout": {
+            "column": 9,
+            "row": 11,
+            "width": 4,
+            "height": 3
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "legend": {
+              "enabled": true
+            },
+            "nrqlQueries": [
+              {
+                "accountId": 3367539,
+                "query": "From DiagnosticsCurl select percentile(time_to_filetransfer_begin, 95) * 1000 as 'Time to Transfer' timeseries MAX FACET hostname"
+              }
+            ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            },
+            "yAxisLeft": {
+              "zero": true
             }
           }
         },
@@ -306,7 +478,7 @@ This is a pre-formatted JSON that you can edit and import into New Relic if you 
           "title": "",
           "layout": {
             "column": 1,
-            "row": 11,
+            "row": 14,
             "width": 12,
             "height": 1
           },
@@ -322,7 +494,7 @@ This is a pre-formatted JSON that you can edit and import into New Relic if you 
           "title": "",
           "layout": {
             "column": 1,
-            "row": 12,
+            "row": 15,
             "width": 4,
             "height": 3
           },
@@ -331,37 +503,43 @@ This is a pre-formatted JSON that you can edit and import into New Relic if you 
             "id": "viz.markdown"
           },
           "rawConfiguration": {
-            "text": "Using DNS to find the server\n---\n* How long does it take to ask for the service by domain name?\n* Does it matter what DNS server we ask?\n* Does it matter where we are asking from?"
+            "text": "Using DNS to find a server\n---\n* How long does it take to ask for our service by domain name?\n* Does it matter what DNS server we ask?\n* Does it matter where we are asking from?"
           }
         },
         {
           "title": "Number of runners",
           "layout": {
             "column": 5,
-            "row": 12,
+            "row": 15,
             "width": 4,
             "height": 3
           },
-          "linkedEntityGuids": null,
+          "linkedEntityGuids": [
+            "MzM2NzUzOXxWSVp8REFTSEJPQVJEfDM5NjgyOTQ"
+          ],
           "visualization": {
-            "id": "viz.billboard"
+            "id": "viz.table"
           },
           "rawConfiguration": {
-            "dataFormatters": [],
+            "facet": {
+              "showOtherSeries": false
+            },
             "nrqlQueries": [
               {
                 "accountId": 3367539,
                 "query": "FROM DiagnosticsDig SELECT uniqueCount(primary_ip) FACET hostname"
               }
             ],
-            "thresholds": []
+            "platformOptions": {
+              "ignoreTimeRange": false
+            }
           }
         },
         {
           "title": "DNS lookup from dig (ms)",
           "layout": {
             "column": 9,
-            "row": 12,
+            "row": 15,
             "width": 4,
             "height": 3
           },
@@ -370,7 +548,6 @@ This is a pre-formatted JSON that you can edit and import into New Relic if you 
             "id": "viz.line"
           },
           "rawConfiguration": {
-            "dataFormatters": [],
             "facet": {
               "showOtherSeries": false
             },
@@ -380,9 +557,12 @@ This is a pre-formatted JSON that you can edit and import into New Relic if you 
             "nrqlQueries": [
               {
                 "accountId": 3367539,
-                "query": "from DiagnosticsDig select percentile(query_time_ms, 95) facet dns_server_ip, primary_ip timeseries max"
+                "query": "from DiagnosticsDig select percentile(query_time_ms, 95) facet hostname, dns_server_ip timeseries max"
               }
             ],
+            "platformOptions": {
+              "ignoreTimeRange": false
+            },
             "yAxisLeft": {
               "max": 30,
               "min": 0.01,
@@ -404,6 +584,9 @@ This is a pre-formatted JSON that you can edit and import into New Relic if you 
             "width": 3,
             "height": 3
           },
+          "linkedEntityGuids": [
+            "MzM2NzUzOXxWSVp8REFTSEJPQVJEfDM5NjgyOTU"
+          ],
           "visualization": {
             "id": "viz.bar"
           },
@@ -427,6 +610,9 @@ This is a pre-formatted JSON that you can edit and import into New Relic if you 
             "width": 3,
             "height": 3
           },
+          "linkedEntityGuids": [
+            "MzM2NzUzOXxWSVp8REFTSEJPQVJEfDM5NjgyOTU"
+          ],
           "visualization": {
             "id": "viz.bar"
           },
@@ -450,6 +636,9 @@ This is a pre-formatted JSON that you can edit and import into New Relic if you 
             "width": 3,
             "height": 3
           },
+          "linkedEntityGuids": [
+            "MzM2NzUzOXxWSVp8REFTSEJPQVJEfDM5NjgyOTU"
+          ],
           "visualization": {
             "id": "viz.bar"
           },
@@ -466,11 +655,41 @@ This is a pre-formatted JSON that you can edit and import into New Relic if you 
           }
         },
         {
+          "title": "Packet loss (%)",
+          "layout": {
+            "column": 10,
+            "row": 1,
+            "width": 3,
+            "height": 7
+          },
+          "linkedEntityGuids": null,
+          "visualization": {
+            "id": "viz.line"
+          },
+          "rawConfiguration": {
+            "facet": {
+              "showOtherSeries": false
+            },
+            "legend": {
+              "enabled": true
+            },
+            "nrqlQueries": [
+              {
+                "accountId": 3367539,
+                "query": "FROM DiagnosticsDnsPing select max(packet_loss_percent) as 'Any Packet Loss' facet primary_ip, dns_server_pinged timeseries MAX LIMIT 40"
+              }
+            ],
+            "yAxisLeft": {
+              "zero": true
+            }
+          }
+        },
+        {
           "title": "Ping times (ms)",
           "layout": {
             "column": 1,
             "row": 4,
-            "width": 6,
+            "width": 9,
             "height": 4
           },
           "linkedEntityGuids": null,
@@ -494,40 +713,11 @@ This is a pre-formatted JSON that you can edit and import into New Relic if you 
               "zero": true
             }
           }
-        },
-        {
-          "title": "Packet loss (%)",
-          "layout": {
-            "column": 7,
-            "row": 4,
-            "width": 6,
-            "height": 4
-          },
-          "linkedEntityGuids": null,
-          "visualization": {
-            "id": "viz.line"
-          },
-          "rawConfiguration": {
-            "facet": {
-              "showOtherSeries": false
-            },
-            "legend": {
-              "enabled": true
-            },
-            "nrqlQueries": [
-              {
-                "accountId": 3367539,
-                "query": "FROM DiagnosticsDnsPing select max(packet_loss_percent) as 'Any Packet Loss' facet primary_ip, dns_server_pinged timeseries MAX LIMIT 40"
-              }
-            ],
-            "yAxisLeft": {
-              "zero": true
-            }
-          }
         }
       ]
     }
-  ]
+  ],
+  "variables": []
 }
 ```
 
